@@ -94,7 +94,6 @@ class Parser {
     const Message = this.model.app.models.Message;
     const Geoloc = this.model.app.models.Geoloc;
 
-
     const userId = req.accessToken.userId;
 
     const response: any = {};
@@ -126,14 +125,18 @@ class Parser {
         } else {
 
           parser.Devices.forEach((device: any, deviceCount: number) => {
+            console.log(device);
             Device.findById(device.id, {include: ['Messages', 'Parser']}, (err: any, deviceInstance: any) => {
               if (err) {
+                // TODO: check here crash cb already called
+                console.error(err);
                 next(err, null);
               } else if (deviceInstance) {
                 deviceInstance = deviceInstance.toJSON();
                 // console.log(device);
                 if (!deviceInstance.Parser) {
                   response.message = 'No parser associated to this device.';
+                  console.error(response.message);
                   next(null, response);
                 } else {
                   const fn = deviceInstance.Parser.function;
